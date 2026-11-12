@@ -99,16 +99,72 @@ class JogoViewModel(
             else -> "Água!"
         }
         
-        _uiState.value = atual.copy(
-            disparos = disparos,
-            status = status,
-            mensagem = mensagem
-        )
+        val novoEstado = atualizarApresentacao(atual.copy(disparos = disparos, status = status, mensagem = mensagem))
+        _uiState.value = novoEstado
 
-        if (status != StatusJogos.JOGANDO) finalizarPartida()
+        if(status != StatusJogos.JOGANDO) finalizarPartida(novoEstado)
     }
 
     private fun identificarAcerto(navios: List<Navio>, posicao: Posicao): Boolean = navios.any { navio -> posicao in navio.posicoes}
 
     private fun contarAfundados(navios: List<Navio>, disparos: List<Posicao>): Int = navios.count { it.estaAfundado(disparos) }
+
+    private fun finalizarPartida(estado: JogoUiState){
+        viewModelScope.launch{
+            try{
+                repository.salvarPartida(
+                    Partida(
+                        jogador = estado.nomeJogador,
+                        tentativas = estado.disparos.size,
+                        acertos = estado.acertos,
+                        pontuacao = estado.pontuacao,
+                        venceu = estado.status == StatusJogos.VITORIA
+                    )
+                )
+            } catch (e: Exception){
+                _uiState.update { it.copy(mensagem = "Erro ao salvar a partida: ${e.message}") }
+            }
+        }
+    }
+
+    private fun atualizarApresentacao(state: JogoUiState){
+        val acertos = state.disparos.filter { identificarAcerto(state.navios, it) }.size
+        val afundados = contarAfundados(state.navios, state.disparos)
+        val restantes = state.tentativasMaximas - state.disparos.size
+
+        val pontuacao = acertos * PONTOS_ACERTO + afundados * PONTOS_NAVIO_AFUNDADO + (if (state.status == StatusJogos.state.VITORIA ) restantes * PONTOS_TENTATIVA_RESTANTE else 0)
+
+        val tabuleiro = (0 until state.tamanhoTabuleiro).flatMap {linha -> (0 until state.tamanhoTabuleiro).map { coluna -> Posicao(linha, coluna)}}
+        .map { posicao -> CelulaUi(posicao, calcularEstadoCelula(state, posicao))}
+
+        val historico = state.disparos.mapIndexed {indice, posicao -> JogadaUi (
+            numero = indice + 1,
+            descricao = "Disparo em ${'A' + posicao.coluna}${posicao.linha + 1}",
+            acertou = identificarAcerto(state.navios, posicao)
+        )}.sortedBy { -it.numero }
+
+        return state.copy(
+            tentativasRestantes = restantes,
+            acertos = acertos,
+            naviosAfundados = afundados,
+            pontuacao = pontuacao, 
+            tabuleiro = tabuleiro,
+            historico = historico
+        )
+    }
+
+    private fun calcularEstadoCelula(state: JogoUiState, posicao: Posicao): EstadoCelula{
+        val temNavio = identificarAcerto(state.navios, posicao)
+        return when {
+            posicao in state.disparos && temNavio -> EstadoCelula.ACERTO
+            posicao in state.disparos -> EstadoCelula.AGUA
+            temNavio && state.status == StatusJogos.DERROTA -> EstadoCelula.NAVIO_REVELADO else -> EstadoCelula.OCULTA
+        }
+    }
+
+    private companion object {
+        const val PONTOS_ACERTO = 10
+        const val PONTOS_NAVIO_AFUNDADO = 50
+        const val PONTOS_TENTATIVA_RESTANTE = 5
+    }
 }
