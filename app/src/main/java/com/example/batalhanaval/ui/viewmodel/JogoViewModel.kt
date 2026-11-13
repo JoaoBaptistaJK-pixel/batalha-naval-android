@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import com.example.batalhanaval.data.Partida
 import com.example.batalhanaval.data.PartidaRepository
 import kotlin.random.Random
@@ -38,6 +40,7 @@ class JogoViewModel(
             totalNavios = navios.size,
             mensagem = "Jogo iniciado! Encontre todos os navios."
         )
+        _uiState.value = atualizarApresentacao(inicial)
     }
 
     private fun gerarNavios(tamanhoTabuleiro: Int, tamanhosNavios: List<Int>): List<Navio>{
@@ -127,12 +130,12 @@ class JogoViewModel(
         }
     }
 
-    private fun atualizarApresentacao(state: JogoUiState){
+    private fun atualizarApresentacao(state: JogoUiState): JogoUiState {
         val acertos = state.disparos.filter { identificarAcerto(state.navios, it) }.size
         val afundados = contarAfundados(state.navios, state.disparos)
         val restantes = state.tentativasMaximas - state.disparos.size
 
-        val pontuacao = acertos * PONTOS_ACERTO + afundados * PONTOS_NAVIO_AFUNDADO + (if (state.status == StatusJogos.state.VITORIA ) restantes * PONTOS_TENTATIVA_RESTANTE else 0)
+        val pontuacao = acertos * PONTOS_ACERTO + afundados * PONTOS_NAVIO_AFUNDADO + (if (state.status == StatusJogos.VITORIA) restantes * PONTOS_TENTATIVA_RESTANTE else 0)
 
         val tabuleiro = (0 until state.tamanhoTabuleiro).flatMap {linha -> (0 until state.tamanhoTabuleiro).map { coluna -> Posicao(linha, coluna)}}
         .map { posicao -> CelulaUi(posicao, calcularEstadoCelula(state, posicao))}
@@ -158,7 +161,8 @@ class JogoViewModel(
         return when {
             posicao in state.disparos && temNavio -> EstadoCelula.ACERTO
             posicao in state.disparos -> EstadoCelula.AGUA
-            temNavio && state.status == StatusJogos.DERROTA -> EstadoCelula.NAVIO_REVELADO else -> EstadoCelula.OCULTA
+            temNavio && state.status == StatusJogos.DERROTA -> EstadoCelula.NAVIO_REVELADO
+            else -> EstadoCelula.OCULTA
         }
     }
 

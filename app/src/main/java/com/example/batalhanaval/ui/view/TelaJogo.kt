@@ -53,30 +53,29 @@ fun TelaJogo(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
-    
 
-    PainelStatus(uiState)
+        PainelStatus(uiState)
 
-    Text(text = uiState.mensagem, style = MaterialTheme.typography.bodyLarge)
+        Text(text = uiState.mensagem, style = MaterialTheme.typography.bodyLarge)
 
-    Tabuleiro(uiState = uiState, onCelulaClick = viewModel::atirar)
+        Tabuleiro(uiState = uiState, onCelulaClick = viewModel::atirar)
 
-    if(uiState.status != StatusJogos.JOGANDO){
-        FimDeJogo(
-            venceu = uiState.status == StatusJogos.VITORIA
-            pontuacao = uiState.pontuacao,
-            onJogarNovamente = { viewModel.iniciarJogo(uiState.nomeJogador)},
-            onVoltar = onVoltar
-        )
-    }
+        if (uiState.status != StatusJogos.JOGANDO) {
+            FimDeJogo(
+                venceu = uiState.status == StatusJogos.VITORIA,
+                pontuacao = uiState.pontuacao,
+                onJogarNovamente = { viewModel.iniciarJogo(uiState.nomeJogador) },
+                onVoltar = onVoltar
+            )
+        }
 
-    Text(text = "Jogadas", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Jogadas", style = MaterialTheme.typography.titleMedium)
 
-    LazyColumn(
+        LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
-        ){
-            items(uiState.historico, key = { it.numero }) { jogada -> JogadaItem(jogada)}
+        ) {
+            items(uiState.historico, key = { it.numero }) { jogada -> JogadaItem(jogada) }
         }
     }
 }
@@ -111,7 +110,7 @@ private fun Tabuleiro(
     uiState: JogoUiState,
     onCelulaClick: (Posicao) -> Unit
 ){
-    val jogando = uiState.status == StatusJogo.JOGANDO
+    val jogando = uiState.status == StatusJogos.JOGANDO
 
     LazyVerticalGrid(columns = GridCells.Fixed(uiState.tamanhoTabuleiro),
         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
