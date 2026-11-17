@@ -1,9 +1,8 @@
-package com.example.batalhanaval.data.repository
+package com.example.batalhanaval.data
 
 import com.example.batalhanaval.data.dao.ConfiguracaoDao
 import com.example.batalhanaval.data.dao.PartidaDao
 import com.example.batalhanaval.data.model.Configuracao
-import com.example.batalhanaval.data.model.Partida
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

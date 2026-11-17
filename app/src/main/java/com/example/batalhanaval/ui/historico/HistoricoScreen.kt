@@ -33,7 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.batalhanaval.data.model.Partida
+import com.example.batalhanaval.data.Partida
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -134,7 +134,7 @@ private fun PartidaItem(
         SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("pt", "BR"))
             .format(Date(partida.dataHoraMillis))
     }
-    val venceu = partida.vencedor == partida.jogador1
+    val venceu = partida.venceu
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -148,11 +148,10 @@ private fun PartidaItem(
                     color = if (venceu) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.error
                 )
-                Text("${partida.jogador1} x ${partida.jogador2}")
-                Text("Vencedor: ${partida.vencedor}")
+                Text(partida.jogador)
+                Text("${partida.pontuacao} pontos")
                 Text(
-                    "$dataFormatada • ${formatarDuracao(partida.duracaoSegundos)} • " +
-                        "${partida.jogadasJogador1} tiros",
+                    "$dataFormatada • ${partida.tentativas} tentativas • ${partida.acertos} acertos",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -163,5 +162,3 @@ private fun PartidaItem(
     }
 }
 
-private fun formatarDuracao(segundos: Int): String =
-    "%02d:%02d".format(segundos / 60, segundos % 60)

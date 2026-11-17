@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.batalhanaval.data.model.Partida
-import com.example.batalhanaval.data.repository.PartidaRepository
+import com.example.batalhanaval.data.Partida
+import com.example.batalhanaval.data.PartidaRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -27,7 +27,7 @@ class HistoricoViewModel(
 
     val uiState: StateFlow<HistoricoUiState> = repository.partidas
         .map { lista ->
-            val vitorias = lista.count { it.vencedor == it.jogador1 }
+            val vitorias = lista.count { it.venceu }
             HistoricoUiState(
                 partidas = lista,
                 carregando = false,

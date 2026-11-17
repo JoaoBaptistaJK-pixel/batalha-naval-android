@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import com.example.batalhanaval.data.dao.ConfiguracaoDao
 import com.example.batalhanaval.data.dao.PartidaDao
 import com.example.batalhanaval.data.model.Configuracao
-import com.example.batalhanaval.data.model.Partida
 
 @Database(
     entities = [Partida::class, Configuracao::class],

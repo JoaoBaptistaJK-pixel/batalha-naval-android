@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.batalhanaval.data.model.Partida
+import com.example.batalhanaval.data.Partida
 import kotlinx.coroutines.flow.Flow
 
 @Dao
