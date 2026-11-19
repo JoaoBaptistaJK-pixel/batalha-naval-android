@@ -11,7 +11,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.batalhanaval.ui.admin.AdminViewModel
 import com.example.batalhanaval.ui.admin.TelaAdmin
 import com.example.batalhanaval.ui.configuracoes.TelaConfiguracoes
 import com.example.batalhanaval.ui.detalhes.TelaDetalhes
@@ -56,32 +56,29 @@ fun AppNavHost(factory: AppViewModelFactory) {
         }
 
         composable(Rotas.USUARIO) {
-            TelaUsuario(factory = factory)
+            TelaUsuario(factory = factory, sessaoViewModel = sessaoViewModel)
         }
 
         composable(Rotas.ADMIN) {
             if (sessao.perfil == Perfil.ADMINISTRADOR) {
                 TelaAdmin(
-                    onVoltar = {
-                        sessaoViewModel.sair()
-                        navController.popBackStack()
-                    }
+                    onVoltar = { navController.popBackStack() }
                 )
-            } else {
-                LaunchedEffect(Unit) { navController.popBackStack() }
             }
         }
     }
 }
 
 @Composable
-fun TelaUsuario(factory: AppViewModelFactory) {
+fun TelaUsuario(factory: AppViewModelFactory, sessaoViewModel: SessaoViewModel) {
     val navInterno = rememberNavController()
     val entradaAtual by navInterno.currentBackStackEntryAsState()
     val rotaAtual = entradaAtual?.destination?.route
 
     val jogoViewModel: JogoViewModel = viewModel(factory = factory)
     val historicoViewModel: HistoricoViewModel = viewModel(factory = factory)
+    val adminViewModel: AdminViewModel = viewModel(factory = AdminViewModel.Factory())
+    val sessao by sessaoViewModel.uiState.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -115,7 +112,7 @@ fun TelaUsuario(factory: AppViewModelFactory) {
             composable(Rotas.JOGO) {
                 TelaJogo(
                     viewModel = jogoViewModel,
-                    nomeJogador = "Jogador",
+                    nomeJogador = sessao.nomeJogador,
                     onVoltar = { navInterno.navigate(Rotas.HISTORICO) }
                 )
             }
@@ -126,7 +123,10 @@ fun TelaUsuario(factory: AppViewModelFactory) {
                 )
             }
             composable(Rotas.CONFIGURACOES) {
-                TelaConfiguracoes()
+                TelaConfiguracoes(
+                    sessaoViewModel = sessaoViewModel,
+                    adminViewModel = adminViewModel
+                )
             }
             composable(
                 route = Rotas.DETALHES,
