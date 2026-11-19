@@ -9,6 +9,4 @@ object Rotas {
     const val HISTORICO = "historico"
     const val CONFIGURACOES = "configuracoes"
     const val DETALHES = "detalhes/{id}"
-
-    fun detalhes(id: Long): String = "detalhes/$id"
 }
