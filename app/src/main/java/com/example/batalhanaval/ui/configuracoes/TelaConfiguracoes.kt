@@ -37,14 +37,13 @@ fun TelaConfiguracoes(
             value = sessao.nomeJogador,
             onValueChange = { sessaoViewModel.alterarNome(it) },
             label = { Text("Nome do jogador") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            modifier = Modifier.fillMaxWidth()
         )
 
         Text("Modos de jogo disponíveis", style = MaterialTheme.typography.titleMedium)
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(admin.configuracoes, key = { it.id }) { config ->
+            items(admin.configuracoes) { config ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(config.nome, style = MaterialTheme.typography.titleSmall)

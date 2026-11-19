@@ -5,10 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-enum class Perfil { NENHUM, USUARIO, ADMINISTRADOR }
-
 data class SessaoUiState(
-    val perfil: Perfil = Perfil.NENHUM,
+    val ehAdmin: Boolean = false,
     val nomeJogador: String = "Jogador"
 )
 
@@ -18,11 +16,11 @@ class SessaoViewModel : ViewModel() {
     val uiState: StateFlow<SessaoUiState> = _uiState.asStateFlow()
 
     fun entrarComoUsuario() {
-        _uiState.value = _uiState.value.copy(perfil = Perfil.USUARIO)
+        _uiState.value = _uiState.value.copy(ehAdmin = false)
     }
 
     fun entrarComoAdministrador() {
-        _uiState.value = _uiState.value.copy(perfil = Perfil.ADMINISTRADOR)
+        _uiState.value = _uiState.value.copy(ehAdmin = true)
     }
 
     fun alterarNome(nome: String) {

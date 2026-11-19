@@ -32,7 +32,6 @@ import com.example.batalhanaval.ui.inicio.TelaInicio
 import com.example.batalhanaval.ui.jogo.JogoViewModel
 import com.example.batalhanaval.ui.jogo.TelaJogo
 import com.example.batalhanaval.ui.viewmodel.AppViewModelFactory
-import com.example.batalhanaval.ui.viewmodel.Perfil
 import com.example.batalhanaval.ui.viewmodel.SessaoViewModel
 
 @Composable
@@ -61,7 +60,7 @@ fun AppNavHost(factory: AppViewModelFactory) {
         }
 
         composable(Rotas.ADMIN) {
-            if (sessao.perfil == Perfil.ADMINISTRADOR) {
+            if (sessao.ehAdmin) {
                 TelaAdmin(
                     onVoltar = { navController.popBackStack() }
                 )
