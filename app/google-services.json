@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "509316133825",
+    "project_id": "batalhanaval-6a389",
+    "storage_bucket": "batalhanaval-6a389.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509316133825:android:2587cf6af52fd98d677540",
+        "android_client_info": {
+          "package_name": "com.example.batalhanaval"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeiORYtrgGAG3z7UfaxjZBE_VGO8Ff-8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
